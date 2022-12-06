@@ -1,5 +1,9 @@
 import math
 
+
+
+
+
 #The float_bin function changes the corresponding floating number to its equivalent binary code will k bits
 def float_bin(number, k):
     b = ""
@@ -116,14 +120,36 @@ def Decoder(Compression):
 
 
 ##The Driver Code
-alphabet = []
+# Sequance = "AAABCCCCACCCCCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+Sequance = "ACBAAAAAAAAAAAAAAAAAAAAAAB"
+print(len(Sequance))
+frequency = {}
+for char in Sequance:
+    if char in frequency:
+        frequency[char] += 1
+    else:
+        frequency[char] = 1
+
 probability = []
+alphabet = []
+for key in frequency.keys():
+    value = frequency[key]
+    alphabet.append(key)
+    probability.append(value/len(Sequance))
+
+print(alphabet)
+print(probability)
+
+
+# len(alphabet)
+# probability = []
 N = int(input("Enter number of letters in file: "))
 for i in range(N):
     a = input("Enter the letter: ")
-    p = float(input("Enter probability for " + a + ": "))
+    # p = float(input("Enter probability for " + a + ": "))
     alphabet.append(a)
-    probability.append(p)
-sequence = input("Enter the sequence to be encoded: ")
-Compression = Encoder(alphabet, probability, N, sequence)
+    # probability.append(p)
+# sequence = input("Enter the sequence to be encoded: ")
+Compression = Encoder(alphabet, probability, N, Sequance)
 Decoder(Compression)
+
