@@ -1,8 +1,6 @@
 import math
-
-
-
-
+filein = open("inout.txt", "r")
+fileout = open("output.txt", 'w')
 
 #The float_bin function changes the corresponding floating number to its equivalent binary code will k bits
 def float_bin(number, k):
@@ -70,10 +68,10 @@ def Encoder(alpha, prob, N, s):
     tag = ((low + high) / 2)
     k = math.ceil(math.log((1 / (high - low)), 2) + 1)
     # print(k)
-    bin_code = float_bin(tag+0.002, k)
-    print("Binary code for the sequence " + s + " is " + bin_code)
-    print("Tag value for sequence is: ", tag+0.001)
-    return [tag+0.001, N, alpha, prob]
+    bin_code = str(float_bin(tag+0.002, k))
+    #print("Binary code for the sequence " + s + " is " + bin_code)
+    #print("Tag value for sequence is: ", tag+0.001)
+    return [bin_code, tag+0.001, N, alpha, prob]
 
 
 #######################################################Decoder Part#####################################################
@@ -83,10 +81,10 @@ Moving on to the decoder function. It first creates a list which contains the al
 and upper value of the particular letter (referred as unity list) forming in a range of 0 to 1.
 """
 def Decoder(Compression):
-    tag = Compression[0]
-    N = Compression[1]
-    alpha = Compression[2]
-    prob = Compression[3]
+    tag = Compression[1]
+    N = Compression[2]
+    alpha = Compression[3]
+    prob = Compression[4]
     arrOfArray = []
     prob_range = 0.0
     seq = ""
@@ -115,14 +113,16 @@ def Decoder(Compression):
                     arrOfArray[k][2] = prob[k] * diff + Low_range
                     Low_range = arrOfArray[k][2]
                 break
-    print("The sequence for Float code " + str(tag) + " is " + seq)
+    #print("The sequence for Float code " + str(tag) + " is " + seq)
+    return seq
 #######################################################Decoder Part#####################################################
 
 
 ##The Driver Code
-# Sequance = "AAABCCCCACCCCCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-Sequance = "ACBAAAAAAAAAAAAAAAAAAAAAAB"
-print(len(Sequance))
+
+Sequance = filein.readline()
+filein.close()
+#print(len(Sequance))
 frequency = {}
 for char in Sequance:
     if char in frequency:
@@ -130,26 +130,32 @@ for char in Sequance:
     else:
         frequency[char] = 1
 
+#f =sorted(frequency)
+f = dict(sorted(frequency.items(), key=lambda x: x[0]))
+#print(f)
 probability = []
 alphabet = []
-for key in frequency.keys():
-    value = frequency[key]
+for key in f.keys():
+    value = f[key]
     alphabet.append(key)
+    N=(len(alphabet))
     probability.append(value/len(Sequance))
+filein = open("input.txt", "r")
+String = filein.readline()
+filein.close()
+#print(alphabet)
+#print(probability)
 
-print(alphabet)
-print(probability)
-
-
-# len(alphabet)
-# probability = []
-N = int(input("Enter number of letters in file: "))
-for i in range(N):
-    a = input("Enter the letter: ")
+#N = int(input("Enter number of letters in file: "))
+#for i in range(N):
+ #   a = input("Enter the letter: ")
     # p = float(input("Enter probability for " + a + ": "))
-    alphabet.append(a)
+  #  alphabet.append(a)
     # probability.append(p)
 # sequence = input("Enter the sequence to be encoded: ")
-Compression = Encoder(alphabet, probability, N, Sequance)
-Decoder(Compression)
 
+Compression =  Encoder(alphabet, probability,N, String)
+decompression = Decoder(Compression)
+fileout.writelines(str( Compression)+'\n')
+fileout.writelines(str( decompression))
+fileout.close()
